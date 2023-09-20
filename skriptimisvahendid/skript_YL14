@@ -1,0 +1,66 @@
+#!/bin/bash
+
+# Paigaldame vajaliku paketi 'dialog', kui see pole juba paigaldatud
+if ! dpkg -l | grep -q dialog; then
+    sudo apt-get update
+    sudo apt-get install -y dialog
+fi
+
+# Funktsioon uuendab paketihalduri andmeid ja uuendab tarkvara
+uuenda_paketid() {
+    sudo apt-get update
+    sudo apt-get upgrade -y
+    echo "Paketihalduri andmete uuendamine ja tarkvara uuendamine õnnestus!"
+}
+
+# Funktsioon paigaldab Apache2 ja käivitab selle teenuse
+paigalda_apache2() {
+    if ! dpkg -l | grep -q apache2; then
+        sudo apt-get install -y apache2
+        sudo systemctl start apache2
+        echo "Apache2 paigaldamine ja teenuse käivitamine õnnestus!"
+    else
+        echo "Hoiatus: Apache2 on juba paigaldatud!"
+    fi
+}
+
+# Funktsioon eemaldab Apache2
+eemalda_apache2() {
+    if dpkg -l | grep -q apache2; then
+        sudo systemctl stop apache2
+        sudo apt-get purge -y apache2
+        sudo apt-get autoremove -y
+        echo "Apache2 eemaldamine õnnestus!"
+    else
+        echo "Hoiatus: Apache2 ei ole paigaldatud!"
+    fi
+}
+
+# Loome dialoogimenüü ja küsime kasutajalt valikut
+while true; do
+    valik=$(dialog --clear --backtitle "Skripti Menüü" --title "Vali toiming" --menu "Vali üks järgmistest toimingutest:" 15 50 4 \
+    1 "Uuenda paketihalduri andmeid ja tarkvara" \
+    2 "Paigalda Apache2 ja käivita teenus" \
+    3 "Eemalda Apache2" \
+    4 "Välju" 3>&1 1>&2 2>&3)
+
+    # Käsitame kasutaja valikut
+    case $valik in
+        1)
+            uuenda_paketid
+            ;;
+        2)
+            paigalda_apache2
+            ;;
+        3)
+            eemalda_apache2
+            ;;
+        4)
+            echo "Skriptist väljumine."
+            exit
+            ;;
+        *)
+            echo "Vale valik. Palun vali uuesti."
+            ;;
+    esac
+done

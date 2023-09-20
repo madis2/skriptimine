@@ -1,0 +1,27 @@
+#!/bin/bash
+
+# Küsi kasutajanime
+read -p "Sisestage kasutajanimi: " kasutajanimi
+
+# Küsi parool (parool ei kuvata trükkimisel)
+read -s -p "Sisestage parool: " parool
+echo  # Lisa tühijoon nähtavuse jaoks
+
+# Küsi grupi nimi
+read -p "Sisestage grupi nimi (või vajutage Enter vaikimisi grupi kasutamiseks 'kylaline'): " grupp
+
+# Kui gruppi ei määrata, kasutame vaikimisi gruppi 'kylaline'
+if [ -z "$grupp" ]; then
+    grupp="kylaline"
+fi
+
+# Loome uue kasutaja
+sudo useradd -m -p "$parool" -g "$grupp" "$kasutajanimi"
+
+# Loome kasutaja kodukausta sisse kausta
+sudo -u "$kasutajanimi" mkdir -p "/home/$kasutajanimi/kataloog"
+
+# Loome teretulemast_fail.txt kasutaja kodukausta sisse
+sudo -u "$kasutajanimi" touch "/home/$kasutajanimi/kataloog/teretulemast_$kasutajanimi.txt"
+
+echo "Kasutaja '$kasutajanimi' on loodud grupiga '$grupp'."

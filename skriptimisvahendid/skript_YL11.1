@@ -1,0 +1,11 @@
+#!/bin/bash
+
+# Küsi kasutajalt teenuse nimi
+read -p "Sisestage teenuse nimi: " teenuse_nimi
+
+# Kontrolli teenuse olekut
+if systemctl is-active --quiet "$teenuse_nimi"; then
+    echo "$teenuse_nimi on aktiivne ja töötab."
+else
+    echo "Hoiatus: $teenuse_nimi ei ole aktiivne!"
+fi

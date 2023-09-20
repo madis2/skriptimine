@@ -1,0 +1,25 @@
+#!/bin/bash
+
+# Küsi kasutajalt faili nimi ja õigused
+read -p "Sisestage faili nimi: " failinimi
+read -p "Sisestage faili õigused: " oigused
+
+# Kontrolli, kas fail on olemas
+if [ -e "$failinimi" ]; then
+    # Kontrolli, kas fail on tõesti fail
+    if [ -f "$failinimi" ]; then
+        # Leia faili tegelikud õigused numbrilisel kujul
+        tegelikud_oigused=$(stat -c %a "$failinimi")
+
+        # Kontrolli, kas tegelikud õigused vastavad kasutaja etteantud õigustele
+        if [ "$tegelikud_oigused" -eq "$oigused" ]; then
+            echo "Fail $failinimi on olemas ja õigustega korrektselt määratud."
+        else
+            echo "Hoiatus: Faili $failinimi õigused on $tegelikud_oigused, peaksid olema $oigused!"
+        fi
+    else
+        echo "Hoiatus: $failinimi pole fail!"
+    fi
+else
+    echo "Hoiatus: Fail $failinimi ei ole olemas!"
+fi

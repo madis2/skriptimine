@@ -1,0 +1,25 @@
+#!/bin/bash
+
+# Funktsioon varundamiseks
+varunda() {
+    if [ -f "$1" ]; then
+        faili_tee="$1"
+        faili_nimi=$(basename "$faili_tee")
+        varukoopia_kaust="/kodu/kasutaja/backup"  # Muuda vastavalt oma vajadustele
+        kuupäevaja_aeg=$(date +"%Y-%m-%d_%H-%M-%S")
+        varukoopia_tee="$varukoopia_kaust/${faili_nimi%.*}_$kuupäevaja_aeg.${faili_nimi##*.}"
+        
+        cp "$faili_tee" "$varukoopia_tee"
+        
+        if [ $? -eq 0 ]; then
+            echo "Varundamine õnnestus: $faili_tee -> $varukoopia_tee"
+        else
+            echo "Varundamine ebaõnnestus: $faili_tee"
+        fi
+    else
+        echo "Hoiatus: Faili $1 ei leitud!"
+    fi
+}
+
+# Kasuta funktsiooni, andes talle faili tee
+varunda "/kodu/kasutaja/minufail.txt"
